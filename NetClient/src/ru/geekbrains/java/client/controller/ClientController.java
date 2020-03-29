@@ -151,8 +151,7 @@ public class ClientController {
 
     public void updateUsersList(List<String> users) {
         users.remove(nickname);
-        users.add("TEST");
-        users.add(0, "All");
+         users.add(0, "All");
         clientChat.updateUsers(users);
     }
 }
