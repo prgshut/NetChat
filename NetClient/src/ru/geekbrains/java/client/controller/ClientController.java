@@ -24,25 +24,30 @@ public class ClientController {
 
     private final NetworkService networkService;
     private Stage primaryStage;
+    private Stage chatStage;
     private Parent rootChat;
     private String nickname;
     ChatControl clientChat;
+
     public ClientController(String serverHost, int serverPort, Stage primaryStage) {
         this.networkService = new NetworkService(serverHost, serverPort);
-        this.primaryStage=primaryStage;
+        this.primaryStage = primaryStage;
+        this.chatStage = new Stage();
     }
-    public  TimerTask tt = new TimerTask() {
+
+    public TimerTask tt = new TimerTask() {
         @Override
         public void run() {
 
             System.exit(0);
         }
     };
-    public Timer timer=new Timer();
+    public Timer timer = new Timer();
 
     public void runApplication() throws IOException {
         timer.schedule(tt, 12000L);
         openAuth();
+        openChat();
         connectToServer();
         runAuthProcess();
     }
@@ -51,7 +56,7 @@ public class ClientController {
 
         FXMLLoader loaderAuth = new FXMLLoader();
         rootChat = loaderAuth.load(getClass().getResourceAsStream("../view/auth/AuthForm.fxml"));
-        AuthControl authDialog  = loaderAuth.getController();
+        AuthControl authDialog = loaderAuth.getController();
         authDialog.setController(this);
 
         Scene scene = new Scene(rootChat, 500, 230);
@@ -59,16 +64,21 @@ public class ClientController {
         primaryStage.setScene(scene);
         primaryStage.setIconified(false);
         primaryStage.show();
-        primaryStage.setOnCloseRequest(e->{
+        primaryStage.setOnCloseRequest(e -> {
             System.exit(0);
         });
     }
+
     private void runAuthProcess() {
         networkService.setSuccessfulAuthEvent(nickname -> {
             setUserName(nickname);
             timer.cancel();
-            Platform.runLater(()->{
-                openChat();
+
+            Platform.runLater(() -> {
+                chatStage.setTitle("Супер чат :" + nickname);
+                chatStage.show();
+                primaryStage.close();
+//                openChat();
             });
         });
 
@@ -82,16 +92,16 @@ public class ClientController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        clientChat  = loaderChat.getController();
+        clientChat = loaderChat.getController();
         clientChat.setController(this);
 
         Scene scene = new Scene(rootChat, 600, 400);
         System.out.println(nickname);
-        primaryStage.setTitle("Супер чат :" + nickname);
-        primaryStage.setScene(scene);
-        primaryStage.setIconified(false);
-        primaryStage.show();
-        primaryStage.setOnCloseRequest(e->{
+//        chatStage.setTitle("Супер чат :" + nickname);
+        chatStage.setScene(scene);
+        chatStage.setIconified(false);
+//        chatStage.show();
+        chatStage.setOnCloseRequest(e -> {
             System.exit(0);
         });
 
@@ -99,6 +109,7 @@ public class ClientController {
             @Override
             public void handle(String message) {
                 clientChat.appendMessage(message);
+
             }
         });
     }
@@ -151,7 +162,7 @@ public class ClientController {
 
     public void updateUsersList(List<String> users) {
         users.remove(nickname);
-         users.add(0, "All");
+        users.add(0, "All");
         clientChat.updateUsers(users);
     }
 }

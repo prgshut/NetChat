@@ -32,9 +32,10 @@ public class ChatControl {
     @FXML
     private Button sendButton;
     private ClientController controller;
+
     @FXML
     void send(ActionEvent event) {
-sendMessage();
+        sendMessage();
     }
 
     @FXML
@@ -45,9 +46,11 @@ sendMessage();
         assert sendButton != null : "fx:id=\"SendButton\" was not injected: check your FXML file 'ChatForm.fxml'.";
 
     }
+
     public void setController(ClientController controller) {
         this.controller = controller;
     }
+
     public void appendMessage(String message) {
         Platform.runLater(new Runnable() {
             @Override
@@ -57,6 +60,7 @@ sendMessage();
             }
         });
     }
+
     private void sendMessage() {
         String message = sendFild.getText().trim();
         if (message.isEmpty()) {
@@ -65,26 +69,26 @@ sendMessage();
 
         appendOwnMessage(message);
 
-        if (clientList.getEditingIndex() < 1) {
+        if (clientList.getSelectionModel().getSelectedIndex() < 1) {
             controller.sendMessageToAllUsers(message);
-        }
-        else {
+        } else {
             String username = clientList.getSelectionModel().getSelectedItem();
             controller.sendPrivateMessage(username, message);
         }
 
         sendFild.setText(null);
     }
+
     private void appendOwnMessage(String message) {
         appendMessage("Я: " + message);
     }
-    public  void updateUsers(List<String> users) {
 
-              System.out.println(users);
-            for (String user : users) {
-                clientList.getItems().add(user);
-            }
-
+    public void updateUsers(List<String> users) {
+        clientList.getItems().clear();
+        System.out.println(users);
+        for (String user : users) {
+            clientList.getItems().add(user);
+        }
 
 
     }
