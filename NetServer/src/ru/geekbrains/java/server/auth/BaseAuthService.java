@@ -1,46 +1,56 @@
 package ru.geekbrains.java.server.auth;
 
-import java.util.List;
-import java.util.Objects;
+import ru.geekbrains.java.base.ConectBase;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 public class BaseAuthService implements AuthService {
-
-    private static class UserData {
-        private String login;
-        private String password;
-        private String username;
-
-        public UserData(String login, String password, String username) {
-            this.login = login;
-            this.password = password;
-            this.username = username;
-        }
-    }
-
-    private static final List<UserData> USER_DATA = List.of(
-            new UserData("1", "1", "user"),
-            new UserData("login1", "pass1", "username1"),
-            new UserData("login2", "pass2", "username2"),
-            new UserData("login3", "pass3", "username3")
-    );
+    private static ConectBase con;
+    private static ResultSet res;
 
     @Override
     public String getUsernameByLoginAndPassword(String login, String password) {
-        for (UserData userDatum : USER_DATA) {
-            if (userDatum.login.equals(login) && userDatum.password.equals(password)) {
-                return userDatum.username;
+        String str =String.format("SELECT user.name FROM test_base.user where user.login='%s' and user.pass='%s';", login, password);
+        res=con.select(str);
+
+            try {
+                  while (res.next()){
+                      System.out.println(res.getString("name"));
+                      return res.getString("name");
+
+                  }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        }
+
         return null;
+    }
+    @Override
+    public boolean rename(String oldUserName, String newUserName){
+        String str = String.format("update test_base.user set user.name = '%s' where name = '%s'", newUserName,oldUserName);
+        int res = con.update(str);
+        if(res ==1){
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void start() {
+         con = new ConectBase();
+        try {
+            con.conect();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         System.out.println("Сервис аутентификации запущен");
     }
 
     @Override
     public void stop() {
         System.out.println("Сервис аутентификации оставлен");
+        con.disconect();
     }
 }

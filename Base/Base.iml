@@ -7,7 +7,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="NetServerClient" exported="" />
-    <orderEntry type="module" module-name="Base" exported="" />
+    <orderEntry type="library" name="mysql-connector-java-8.0.19 (2)" level="project" />
   </component>
 </module>

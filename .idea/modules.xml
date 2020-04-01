@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Base/Base.iml" filepath="$PROJECT_DIR$/Base/Base.iml" />
       <module fileurl="file://$PROJECT_DIR$/NetChat.iml" filepath="$PROJECT_DIR$/NetChat.iml" />
       <module fileurl="file://$PROJECT_DIR$/NetClient/NetClient.iml" filepath="$PROJECT_DIR$/NetClient/NetClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/NetServer/NetServer.iml" filepath="$PROJECT_DIR$/NetServer/NetServer.iml" />

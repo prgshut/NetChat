@@ -5,6 +5,7 @@ import ru.geekbrains.java.client.CommandType;
 import ru.geekbrains.java.client.command.AuthCommand;
 import ru.geekbrains.java.client.command.BroadcastMessageCommand;
 import ru.geekbrains.java.client.command.PrivateMessageCommand;
+import ru.geekbrains.java.client.command.RenameCommand;
 import ru.geekbrains.java.server.NetworkServer;
 
 import java.io.*;
@@ -74,6 +75,13 @@ public class ClientHandler {
                     String receiver = commandData.getReceiver();
                     String message = commandData.getMessage();
                     networkServer.sendMessage(receiver, Command.messageCommand(nickname, message));
+                    break;
+                }
+                case RENAME:{
+                    RenameCommand comandData = (RenameCommand) command.getData();
+                    String oldUserName = comandData.getOldUserName();
+                    String newUserName = comandData.getNewUserName();
+                    networkServer.getAuthService().rename(oldUserName,newUserName);
                     break;
                 }
                 case BROADCAST_MESSAGE: {

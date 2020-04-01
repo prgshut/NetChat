@@ -8,15 +8,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.geekbrains.java.client.view.chat.ChatControl">
    <children>
       <HBox layoutX="-1.0" prefHeight="400.0" prefWidth="600.0">
          <children>
             <VBox prefHeight="400.0" prefWidth="138.0">
                <children>
+                  <Button fx:id="renameButton" mnemonicParsing="false" onAction="#renameOn" prefHeight="25.0" prefWidth="135.0" text="Переиминовать" />
                   <Label prefHeight="23.0" prefWidth="138.0" text="Пользователи" />
-                  <ListView fx:id="clientList" prefHeight="379.0" prefWidth="137.0" />
+                  <ListView fx:id="clientList" prefHeight="351.0" prefWidth="137.0" />
                </children>
             </VBox>
             <VBox prefHeight="400.0" prefWidth="464.0">

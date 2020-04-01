@@ -25,6 +25,12 @@ public class Command implements Serializable {
         return command;
     }
 
+    public static Command renameCommand(String oldUserNema, String newUserName) {
+        Command command = new Command();
+        command.type = CommandType.RENAME;
+        command.data = new RenameCommand(oldUserNema,newUserName);
+        return command;
+    }
     public static Command authErrorCommand(String errorMessage) {
         Command command = new Command();
         command.type = CommandType.AUTH_ERROR;

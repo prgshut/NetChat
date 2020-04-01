@@ -1,5 +1,6 @@
 package ru.geekbrains.java.client.view.chat;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -7,10 +8,17 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import ru.geekbrains.java.client.controller.ClientController;
+import ru.geekbrains.java.client.view.rename.RenameControl;
 
 public class ChatControl {
 
@@ -28,14 +36,38 @@ public class ChatControl {
 
     @FXML
     private TextField sendFild;
+    @FXML
+    private Button renameButton;
 
     @FXML
     private Button sendButton;
     private ClientController controller;
-
+    private Parent rootRename;
     @FXML
     void send(ActionEvent event) {
         sendMessage();
+    }
+
+    @FXML
+    void renameOn(ActionEvent event) {
+        Stage renameStage = new Stage();
+        FXMLLoader loaderRename = new FXMLLoader();
+
+        try {
+            rootRename = loaderRename.load(getClass().getResourceAsStream("../rename/RenameForm.fxml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        RenameControl renameModel = loaderRename.getController();
+        renameModel.setController(this.controller);
+        Scene scene = new Scene(rootRename, 300, 200);
+        renameStage.setTitle("Переименовка");
+        renameStage.setScene(scene);
+        renameStage.initModality(Modality.WINDOW_MODAL);
+        renameStage.initOwner(((Node)event.getSource()).getScene().getWindow());
+        renameStage.setIconified(false);
+        renameStage.show();
+
     }
 
     @FXML
@@ -46,11 +78,9 @@ public class ChatControl {
         assert sendButton != null : "fx:id=\"SendButton\" was not injected: check your FXML file 'ChatForm.fxml'.";
 
     }
-
     public void setController(ClientController controller) {
         this.controller = controller;
     }
-
     public void appendMessage(String message) {
         Platform.runLater(new Runnable() {
             @Override

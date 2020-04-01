@@ -9,4 +9,5 @@ public enum CommandType {
     UPDATE_USERS_LIST,
     ERROR,
     END,
+    RENAME,
 }
