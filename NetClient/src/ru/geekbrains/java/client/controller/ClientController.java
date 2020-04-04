@@ -27,7 +27,7 @@ public class ClientController {
     private Stage chatStage;
     private Parent rootChat;
     private String nickname;
-    ChatControl clientChat;
+    private ChatControl clientChat;
 
     public ClientController(String serverHost, int serverPort, Stage primaryStage) {
         this.networkService = new NetworkService(serverHost, serverPort);
@@ -45,7 +45,7 @@ public class ClientController {
     public Timer timer = new Timer();
 
     public void runApplication() throws IOException {
-        timer.schedule(tt, 12000L);
+//        timer.schedule(tt, 12000L);
         openAuth();
         openChat();
         connectToServer();
@@ -58,7 +58,6 @@ public class ClientController {
         rootChat = loaderAuth.load(getClass().getResourceAsStream("../view/auth/AuthForm.fxml"));
         AuthControl authDialog = loaderAuth.getController();
         authDialog.setController(this);
-
         Scene scene = new Scene(rootChat, 500, 230);
         primaryStage.setTitle("Авторизация");
         primaryStage.setScene(scene);
@@ -72,7 +71,7 @@ public class ClientController {
     private void runAuthProcess() {
         networkService.setSuccessfulAuthEvent(nickname -> {
             setUserName(nickname);
-            timer.cancel();
+//            timer.cancel();
 
             Platform.runLater(() -> {
                 chatStage.setTitle("Супер чат :" + nickname);
@@ -94,7 +93,6 @@ public class ClientController {
         }
         clientChat = loaderChat.getController();
         clientChat.setController(this);
-
         Scene scene = new Scene(rootChat, 600, 400);
         System.out.println(nickname);
 //        chatStage.setTitle("Супер чат :" + nickname);
@@ -136,6 +134,14 @@ public class ClientController {
             networkService.sendCommand(broadcastMessageCommand(message));
         } catch (IOException e) {
 
+            e.printStackTrace();
+        }
+    }
+
+    public void renameUserName( String newUserName){
+        try {
+            networkService.sendCommand(renameCommand(this.nickname,newUserName));
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

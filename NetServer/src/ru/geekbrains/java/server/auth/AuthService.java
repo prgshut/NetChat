@@ -6,5 +6,6 @@ public interface AuthService {
 
     void start();
     void stop();
+    boolean rename(String oldUserName, String newUserName);
 
 }
