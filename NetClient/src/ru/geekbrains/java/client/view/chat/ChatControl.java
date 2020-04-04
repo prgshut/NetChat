@@ -112,7 +112,15 @@ public class ChatControl {
     private void appendOwnMessage(String message) {
         appendMessage("Я: " + message);
     }
+    public List<String> saveHistori(){
 
+        return  chatFild.getItems();
+    }
+    public void appendHistori(List<String> histori){
+        if (histori!=null) {
+            chatFild.getItems().addAll(histori);
+        }
+    }
     public void updateUsers(List<String> users) {
         clientList.getItems().clear();
         System.out.println(users);

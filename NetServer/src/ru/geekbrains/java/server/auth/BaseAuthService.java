@@ -12,7 +12,7 @@ public class BaseAuthService implements AuthService {
 
     @Override
     public String getUsernameByLoginAndPassword(String login, String password) {
-        String str =String.format("SELECT user.name FROM test_base.user where user.login='%s' and user.pass='%s';", login, password);
+        final String str =String.format("SELECT user.name FROM test_base.user where user.login='%s' and user.pass='%s';", login, password);
         res=con.select(str);
 
             try {
@@ -29,7 +29,7 @@ public class BaseAuthService implements AuthService {
     }
     @Override
     public boolean rename(String oldUserName, String newUserName){
-        String str = String.format("update test_base.user set user.name = '%s' where name = '%s'", newUserName,oldUserName);
+        final String str = String.format("update test_base.user set user.name = '%s' where name = '%s'", newUserName,oldUserName);
         int res = con.update(str);
         if(res ==1){
             return true;

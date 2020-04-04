@@ -7,6 +7,7 @@ import ru.geekbrains.java.client.command.BroadcastMessageCommand;
 import ru.geekbrains.java.client.command.PrivateMessageCommand;
 import ru.geekbrains.java.client.command.RenameCommand;
 import ru.geekbrains.java.server.NetworkServer;
+import ru.geekbrains.java.server.filter.CensorshipFilter;
 
 import java.io.*;
 import java.net.Socket;
@@ -15,7 +16,7 @@ public class ClientHandler {
 
     private final NetworkServer networkServer;
     private final Socket clientSocket;
-
+    private CensorshipFilter filter;
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
@@ -24,9 +25,11 @@ public class ClientHandler {
     public ClientHandler(NetworkServer networkServer, Socket socket) {
         this.networkServer = networkServer;
         this.clientSocket = socket;
+        filter= new CensorshipFilter();
     }
 
     public void run() {
+        filter.creatMatList();
         doHandle(clientSocket);
     }
 
@@ -74,6 +77,7 @@ public class ClientHandler {
                     PrivateMessageCommand commandData = (PrivateMessageCommand) command.getData();
                     String receiver = commandData.getReceiver();
                     String message = commandData.getMessage();
+                    message=filter.matFilter(message);
                     networkServer.sendMessage(receiver, Command.messageCommand(nickname, message));
                     break;
                 }
@@ -87,6 +91,7 @@ public class ClientHandler {
                 case BROADCAST_MESSAGE: {
                     BroadcastMessageCommand commandData = (BroadcastMessageCommand) command.getData();
                     String message = commandData.getMessage();
+                    message=filter.matFilter(message);
                     networkServer.broadcastMessage(Command.messageCommand(nickname, message), this);
                     break;
                 }
