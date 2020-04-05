@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import ru.geekbrains.java.client.Command;
 
+import ru.geekbrains.java.client.io.HistoriChat;
 import ru.geekbrains.java.client.model.NetworkService;
 import ru.geekbrains.java.client.view.auth.AuthControl;
 import ru.geekbrains.java.client.view.chat.ChatControl;
@@ -14,6 +15,7 @@ import ru.geekbrains.java.client.view.chat.ChatControl;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,11 +30,13 @@ public class ClientController {
     private Parent rootChat;
     private String nickname;
     private ChatControl clientChat;
+    private HistoriChat historiChat;
 
     public ClientController(String serverHost, int serverPort, Stage primaryStage) {
         this.networkService = new NetworkService(serverHost, serverPort);
         this.primaryStage = primaryStage;
         this.chatStage = new Stage();
+        historiChat = new HistoriChat();
     }
 
     public TimerTask tt = new TimerTask() {
@@ -74,13 +78,18 @@ public class ClientController {
 //            timer.cancel();
 
             Platform.runLater(() -> {
-                chatStage.setTitle("Супер чат :" + nickname);
-                chatStage.show();
-                primaryStage.close();
+                runchat();
 //                openChat();
             });
         });
 
+    }
+
+    private void runchat() {
+        chatStage.setTitle("Супер чат :" + nickname);
+        chatStage.show();
+        clientChat.appendHistori(historiChat.readHistori(nickname));
+        primaryStage.close();
     }
 
     private void openChat() {
@@ -100,6 +109,7 @@ public class ClientController {
         chatStage.setIconified(false);
 //        chatStage.show();
         chatStage.setOnCloseRequest(e -> {
+            historiChat.writeHistori(clientChat.saveHistori(),nickname);
             System.exit(0);
         });
 
