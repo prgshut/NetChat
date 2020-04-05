@@ -11,6 +11,8 @@ import ru.geekbrains.java.server.filter.CensorshipFilter;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ClientHandler {
 
@@ -37,8 +39,8 @@ public class ClientHandler {
         try {
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-
-            new Thread(() -> {
+            ExecutorService executorService = Executors.newFixedThreadPool(10);
+            executorService.execute(() -> {
                 try {
                     authentication();
                     readMessages();
@@ -47,7 +49,7 @@ public class ClientHandler {
                 } finally {
                     closeConnection();
                 }
-            }).start();
+            });
 
         } catch (IOException e) {
             e.printStackTrace();
