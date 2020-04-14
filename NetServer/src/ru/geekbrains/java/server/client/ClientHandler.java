@@ -1,5 +1,6 @@
 package ru.geekbrains.java.server.client;
 
+import org.apache.log4j.Logger;
 import ru.geekbrains.java.client.Command;
 import ru.geekbrains.java.client.CommandType;
 import ru.geekbrains.java.client.command.AuthCommand;
@@ -15,7 +16,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ClientHandler {
-
+    final static Logger admin =Logger.getLogger("admin");
+    final static Logger info =Logger.getLogger("info");
     private final NetworkServer networkServer;
     private final Socket clientSocket;
     private CensorshipFilter filter;
@@ -45,7 +47,8 @@ public class ClientHandler {
                     authentication();
                     readMessages();
                 } catch (IOException e) {
-                    System.out.println("Соединение с клиентом " + nickname + " было закрыто!");
+//                    System.out.println("Соединение с клиентом " + nickname + " было закрыто!");
+                    admin.error("Соединение с клиентом " + nickname + " было закрыто!");
                 } finally {
                     closeConnection();
                 }
@@ -60,6 +63,7 @@ public class ClientHandler {
         try {
             networkServer.unsubscribe(this);
             clientSocket.close();
+            info.info("Завершил работу "+nickname);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -80,6 +84,7 @@ public class ClientHandler {
                     String receiver = commandData.getReceiver();
                     String message = commandData.getMessage();
                     message=filter.matFilter(message);
+                    info.info("Пользователь "+nickname+ " отправил сообщение "+receiver);
                     networkServer.sendMessage(receiver, Command.messageCommand(nickname, message));
                     break;
                 }
@@ -87,6 +92,7 @@ public class ClientHandler {
                     RenameCommand comandData = (RenameCommand) command.getData();
                     String oldUserName = comandData.getOldUserName();
                     String newUserName = comandData.getNewUserName();
+                    admin.info("Пользователь переименовался был "+oldUserName+" Стал "+newUserName);
                     networkServer.getAuthService().rename(oldUserName,newUserName);
                     break;
                 }
@@ -94,11 +100,13 @@ public class ClientHandler {
                     BroadcastMessageCommand commandData = (BroadcastMessageCommand) command.getData();
                     String message = commandData.getMessage();
                     message=filter.matFilter(message);
+                    info.info("Пользователь "+nickname+"отправил общее сообщение");
                     networkServer.broadcastMessage(Command.messageCommand(nickname, message), this);
                     break;
                 }
                 default:
-                    System.err.println("Unknown type of command : " + command.getType());
+                    admin.warn("Unknown type of command : " + command.getType());
+//                    System.err.println("Unknown type of command : " + command.getType());
             }
         }
     }
