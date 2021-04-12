@@ -1,5 +1,6 @@
 package ru.geekbrains.java.server;
 
+import org.apache.log4j.Logger;
 import ru.geekbrains.java.client.Command;
 import ru.geekbrains.java.server.auth.AuthService;
 import ru.geekbrains.java.server.auth.BaseAuthService;
@@ -15,7 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class NetworkServer {
-
+    final static Logger admin =Logger.getLogger("admin");
     private final int port;
 //    private final List<ClientHandler> clients = new ArrayList<>();
 //    private final List<ClientHandler> clients = Collections.synchronizedList(new ArrayList<>());
@@ -29,16 +30,20 @@ public class NetworkServer {
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Сервер был успешно запущен на порту " + port);
+//            System.out.println("Сервер был успешно запущен на порту " + port);
+            admin.info("Сервер был успешно запущен на порту " + port);
             authService.start();
             while (true) {
-                System.out.println("Ожидание клиентского подключения...");
+//                System.out.println("Ожидание клиентского подключения...");
+                admin.info("Ожидание клиентского подключения...");
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Клиент подлючился");
+//                System.out.println("Клиент подлючился");
+                admin.info("Клиент подключился");
                 createClientHandler(clientSocket);
             }
         } catch (IOException e) {
-            System.out.println("Ошибка при работе сервера");
+//            System.out.println("Ошибка при работе сервера");
+            admin.error("Ошибка при запуске сервера!! порт "+port);
             e.printStackTrace();
         } finally {
             authService.stop();
